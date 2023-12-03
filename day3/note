@@ -1,5 +1,0 @@
-Note to self:
-
-Task 2 has a bug. It had a problem when detecting the same number twice if two of the digits of that number are ajacent to the "*"
-This happens in the bottom left of the test data. I fixed this by checking if the second number is different from the previous,
-but this would break if the second number coincidentally was the same as the fist. Then it would only find one neighbour to the "*"
