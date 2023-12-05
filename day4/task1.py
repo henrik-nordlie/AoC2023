@@ -5,6 +5,7 @@ ans = 0
 for i, line in enumerate(file.readlines()):
     game, line = line.split(":")
     winners, mine = line.split("|")
+
     game_ans = 0
     j = 0
     for winner in winners.split():
@@ -15,3 +16,4 @@ for i, line in enumerate(file.readlines()):
     print(game_ans)
     ans += game_ans
 print(ans)
+
