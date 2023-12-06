@@ -22,10 +22,12 @@ for i, line in enumerate(lines):
             else:
                 map_dict[str(i)].append([eval(val) for val in vals])
 
+print(map_dict)
 
 location_numbers = []
 
 for k, seed in enumerate(seeds.split()[1:]):
+    print("Seed number: " + str(k))
     response = int(seed)
     for map in map_dict:
         for ran_map in map_dict[map]:
