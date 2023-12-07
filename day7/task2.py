@@ -1,30 +1,6 @@
 from numpy import argmin
 
-file = open("data.txt", "r")
 
-lines = file.read().split("\n")
-hand_dict = {}
-
-char_dict = {"T":"10",
-             "J":"01",
-             "Q":"12",
-             "K":"13",
-             "A":"14",
-             "2":"2",
-             "3":"3",
-             "4":"4",
-             "5":"5",
-             "6":"6",
-             "7":"7",
-             "8":"8",
-             "9":"9"}
-
-for line in lines[:-1]:
-    print(line)
-    print(80*"=")
-    hand_bid = line.split()
-    hand, bid = hand_bid[0], int(hand_bid[1])
-    hand_dict[hand] = [bid]
 
 def count_num_occ(hand):
     num_occurances = {}
@@ -108,34 +84,6 @@ def score_hand(hand):
             hand_vals += char_dict[char]  
     return hand_vals
 
-
-def swap_hands(hand1, hand2):
-    if hand1[1] > hand2[1]:
-        return False
-    elif hand2[1] > hand1[1]:
-        return True
-    else: # same hand type
-        hand1_score = hand1[2]
-        hand2_score = hand2[2]
-
-        for i, val in enumerate(hand1_score):
-            if hand2_score[i] > val:
-                return True
-            elif val > hand2_score:
-                return False
-        # if here they are the same
-        return False
-
-# Extend dict with hand type and scores
-for hand in hand_dict:
-    num_occurances = count_num_occ(hand)
-    num_occurances, new_hand = replace_J(num_occurances, hand)
-    print(new_hand)
-    hand_type = get_hand_type(new_hand)
-    hand_dict[hand].append(int(hand_type+score_hand(hand)))
-
-print(hand_dict)
-
 def sort_my(dic):
     sorted_hand_vals = []
     for hand in dic:
@@ -154,10 +102,44 @@ def sort_my(dic):
             sorted_hand_vals.append([bid, val])
     return sorted_hand_vals
 
+file = open("data.txt", "r")
 
-sorted_hand_vals = sort_my(hand_dict)
+lines = file.read().split("\n")
+hand_dict = {}
 
-ans = 0
-for i in range(len(sorted_hand_vals)):
-    ans += sorted_hand_vals[i][0]*(len(sorted_hand_vals)-i)
-print(ans)
+char_dict = {"T":"10",
+             "J":"01",
+             "Q":"12",
+             "K":"13",
+             "A":"14",
+             "2":"2",
+             "3":"3",
+             "4":"4",
+             "5":"5",
+             "6":"6",
+             "7":"7",
+             "8":"8",
+             "9":"9"}
+def main():
+    for line in lines[:-1]:
+        hand_bid = line.split()
+        hand, bid = hand_bid[0], int(hand_bid[1])
+        hand_dict[hand] = [bid]
+
+    # Extend dict with hand type and scores
+    for hand in hand_dict:
+        num_occurances = count_num_occ(hand)
+        num_occurances, new_hand = replace_J(num_occurances, hand)
+        hand_type = get_hand_type(new_hand)
+        hand_dict[hand].append(int(hand_type+score_hand(hand)))
+
+    sorted_hand_vals = sort_my(hand_dict)
+
+    ans = 0
+    for i in range(len(sorted_hand_vals)):
+        ans += sorted_hand_vals[i][0]*(len(sorted_hand_vals)-i)
+    print(ans)
+
+
+if __name__ == "__main__":
+    main()
