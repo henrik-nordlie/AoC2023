@@ -1,6 +1,5 @@
 file = open("data.txt", "r")
 
-
 ans = 0
 for i, line in enumerate(file.readlines()):
     game, line = line.split(":")
