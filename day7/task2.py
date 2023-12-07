@@ -1,7 +1,5 @@
 from numpy import argmin
 
-
-
 def count_num_occ(hand):
     num_occurances = {}
     for char in hand:
@@ -102,25 +100,26 @@ def sort_my(dic):
             sorted_hand_vals.append([bid, val])
     return sorted_hand_vals
 
-file = open("data.txt", "r")
 
-lines = file.read().split("\n")
-hand_dict = {}
-
-char_dict = {"T":"10",
-             "J":"01",
-             "Q":"12",
-             "K":"13",
-             "A":"14",
-             "2":"2",
-             "3":"3",
-             "4":"4",
-             "5":"5",
-             "6":"6",
-             "7":"7",
-             "8":"8",
-             "9":"9"}
 def main():
+    file = open("data.txt", "r")
+
+    lines = file.read().split("\n")
+    hand_dict = {}
+
+    char_dict = {"T":"10",
+                 "J":"01",
+                 "Q":"12",
+                 "K":"13",
+                 "A":"14",
+                 "2":"2",
+                 "3":"3",
+                 "4":"4",
+                 "5":"5",
+                 "6":"6",
+                 "7":"7",
+                 "8":"8",
+                 "9":"9"}
     for line in lines[:-1]:
         hand_bid = line.split()
         hand, bid = hand_bid[0], int(hand_bid[1])
