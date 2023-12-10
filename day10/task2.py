@@ -64,7 +64,6 @@ def find_path(connections, used_pos):
             used_pos.append(next_connection[0])
 
 
-    used_pos.append(next_connection[0])
     return count, used_pos
 
 neighs = [[-1,0], [1,0], [0,-1], [0,1]] 
@@ -110,3 +109,8 @@ for i, line in enumerate(print_lines):
 
     print(print_lines[i]) 
 print(enclosed_count)
+"""
+Note to self:
+Can have pipe of width one looking like width two by zig-zagging (look at test print)
+No clue how to solve this
+    """
