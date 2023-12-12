@@ -37,7 +37,7 @@ used_pos = []
 connections = find_connections(start, dir_dict)
 used_pos.append(start)
 for connection in connections:
-    used_pos.append(connection[0])
+    used_pos.append(connection[0])  
 
 def find_path(connections, used_pos):
     end = False
@@ -85,16 +85,22 @@ for i, line in enumerate(lines[:-1]):
     print_line = ""
     pipe_count = 0
     for j, char in enumerate(line):
-        if (i, j) in used_pos: # if we have been here
-            pipe_count += 1
+        if (i, j) in used_pos:
+            if char in ["L", "J", "|", "S"]:
+                pipe_count += 1
             print_line += "O"
         else:
+            if not pipe_count % 2 == 0:
+                print_line += "X"
+            else:
                 print_line += "I"
     pipe_counts.append(pipe_count)
     print_lines.append(print_line)
     print(print_line)
 
+
 print(80*"=")
+"""
 for i, line in enumerate(print_lines):
     curr_pipe_count = 0
     for j, char in enumerate(line):
@@ -106,9 +112,14 @@ for i, line in enumerate(print_lines):
                 if not (pipe_counts[i] - curr_pipe_count) % 2 == 0:
                     print_lines[i] = print_lines[i][:j] + "X" + print_lines[i][j+1:] 
                     enclosed_count += 1
-
-    print(print_lines[i]) 
+"""
+enclosed_count = 0
+for i, line in enumerate(print_lines):
+    for j, char in enumerate(line):
+        if char == "X":
+            enclosed_count += 1
 print(enclosed_count)
+
 """
 Note to self:
 Can have pipe of width one looking like width two by zig-zagging (look at test print)
