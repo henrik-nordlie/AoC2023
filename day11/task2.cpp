@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <array>
 #include <algorithm>
 using namespace std;
 
@@ -47,23 +48,23 @@ vector<string> build_universe (const char* filename) {
     }
 }
 
-int find_manh_dist (array<int,2> a, array<int,2> b) {
-    int d_x = abs(b[0] - a[0]);
-    int d_y = abs(b[1] - a[1]);
-    int euc_dist = d_x + d_y;
+long long find_manh_dist (array<long long,2> a, array<long long,2> b) {
+    long long d_x = abs(b[0] - a[0]);
+    long long d_y = abs(b[1] - a[1]);
+    long long euc_dist = d_x + d_y;
     return euc_dist;
 }
 
-vector<array<int, 2>> find_galaxies(vector<string> universe, bool empty_cols[], bool empty_lines[]) {
-    vector<array<int, 2>> galaxies;
-    array<int,2> new_galaxy;
-    int i_dist = 0;
+vector<array<long long, 2>> find_galaxies(vector<string> universe, bool empty_cols[], bool empty_lines[]) {
+    vector<array<long long, 2>> galaxies;
+    array<long long,2> new_galaxy;
+    long long i_dist = 0;
     for (int i=0; i<universe.size(); i++) {
         if (empty_lines[i]) {
             i_dist += 1000000;
             continue;
         }
-        int j_dist = 0;
+        long long j_dist = 0;
         for (int j=0; j<universe[0].size(); j++) {
             if (universe[i][j] == '#') {
                 new_galaxy[0] = i_dist;
@@ -85,11 +86,11 @@ vector<array<int, 2>> find_galaxies(vector<string> universe, bool empty_cols[], 
     return galaxies;
 }
 
-vector<array<int, 3>> generate_galaxy_pair_dists(vector<array<int,2>> galaxies) {
-    vector<array<int, 3>> galaxy_pair_dists;
+vector<array<long long, 3>> generate_galaxy_pair_dists(vector<array<long long,2>> galaxies) {
+    vector<array<long long, 3>> galaxy_pair_dists;
     for (int i=0; i<galaxies.size(); i++) {
         for (int j=galaxies.size()-1; j>i; j--) {
-           array<int,3> pair_dist;
+           array<long long,3> pair_dist;
            pair_dist[0] = i+1; // adding one to make galaxy pair index same as galaxy number
            pair_dist[1] = j+1;
            pair_dist[2] = find_manh_dist(galaxies[i], galaxies[j]);
@@ -110,9 +111,9 @@ int main () {
     bool empty_lines [universe.size()];
     bool empty_cols [universe[0].length()];
     find_empty_lines_cols(universe, empty_cols, empty_lines);
-    vector<array<int, 2>> galaxies = find_galaxies(universe, empty_cols, empty_lines);
-    vector<array<int, 3>> galaxy_pair_dists = generate_galaxy_pair_dists(galaxies);
-    int ans = 0;
+    vector<array<long long, 2>> galaxies = find_galaxies(universe, empty_cols, empty_lines);
+    vector<array<long long, 3>> galaxy_pair_dists = generate_galaxy_pair_dists(galaxies);
+    long long ans = 0;
     for (int i=0; i<galaxy_pair_dists.size(); i++) {
         for (const auto j: galaxy_pair_dists[i]) {
             cout << j << " ";
