@@ -1,3 +1,4 @@
+hello
 file = open("test.txt", "r")
 
 lines = file.read().split("\n")
@@ -32,12 +33,26 @@ def next_dir(char, direction):
     else:
         return to_to_from[char_dict[char][0]]
 
+line_occ_count = []
+col_occ_count = []
+for i in range(len(lines[:-1])):
+    line_occ_count.append(0)
+for i in range(len(lines[0])):
+    col_occ_count.append(0)
+
 # Find connections from start
 used_pos = []
 connections = find_connections(start, dir_dict)
 used_pos.append(start)
+line_occ_count[start[0]] += 1
+col_occ_count[start[1]] += 1
 for connection in connections:
     used_pos.append(connection[0])
+    if connection[0][0] != start[0]:
+        line_occ_count[connection[0][0]] += 1
+    elif connection[0][1] != start[1]:
+        col_occ_count[connection[0][1]] += 1
+
 
 def find_path(connections, used_pos):
     end = False
@@ -50,6 +65,10 @@ def find_path(connections, used_pos):
                    if next_connection[0] not in used_pos:
                        if not next_connection[0] in next_connections:
                            next_connections.append(next_connection)
+                           if next_connection[0][0] != connection[0][0]:
+                               line_occ_count[next_connection[0][0]] += 1
+                           elif next_connection[0][1] != connection[0][1]:
+                               col_occ_count[next_connection[0][1]] += 1
                        else: # if next_connection is already in next_connections, we are at the end
                            end = True
                            break
@@ -64,6 +83,7 @@ def find_path(connections, used_pos):
             used_pos.append(next_connection[0])
 
 
+    used_pos.append(next_connection[0])
     return count, used_pos
 
 neighs = [[-1,0], [1,0], [0,-1], [0,1]] 
@@ -94,6 +114,8 @@ for i, line in enumerate(lines[:-1]):
     print_lines.append(print_line)
     print(print_line)
 
+print(line_occ_count)
+print(col_occ_count)
 print(80*"=")
 for i, line in enumerate(print_lines):
     curr_pipe_count = 0
@@ -103,14 +125,9 @@ for i, line in enumerate(print_lines):
         elif char == "I": 
             pos = (i,j)
             if not touches_wall(pos, print_lines, visited_pos=[]):
-                if not (pipe_counts[i] - curr_pipe_count) % 2 == 0:
+                if not line_occ_count[i] % 2 == 0 or not col_occ_count[j] % 2 == 0:
                     print_lines[i] = print_lines[i][:j] + "X" + print_lines[i][j+1:] 
                     enclosed_count += 1
 
     print(print_lines[i]) 
 print(enclosed_count)
-"""
-Note to self:
-Can have pipe of width one looking like width two by zig-zagging (look at test print)
-No clue how to solve this
-    """
