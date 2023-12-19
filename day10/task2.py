@@ -1,4 +1,3 @@
-hello
 file = open("test.txt", "r")
 
 lines = file.read().split("\n")
@@ -105,10 +104,14 @@ for i, line in enumerate(lines[:-1]):
     print_line = ""
     pipe_count = 0
     for j, char in enumerate(line):
-        if (i, j) in used_pos: # if we have been here
-            pipe_count += 1
+        if (i, j) in used_pos:
+            if char in ["L", "J", "|", "S"]:
+                pipe_count += 1
             print_line += "O"
         else:
+            if not pipe_count % 2 == 0:
+                print_line += "X"
+            else:
                 print_line += "I"
     pipe_counts.append(pipe_count)
     print_lines.append(print_line)
@@ -117,6 +120,7 @@ for i, line in enumerate(lines[:-1]):
 print(line_occ_count)
 print(col_occ_count)
 print(80*"=")
+"""
 for i, line in enumerate(print_lines):
     curr_pipe_count = 0
     for j, char in enumerate(line):
@@ -128,6 +132,10 @@ for i, line in enumerate(print_lines):
                 if not line_occ_count[i] % 2 == 0 or not col_occ_count[j] % 2 == 0:
                     print_lines[i] = print_lines[i][:j] + "X" + print_lines[i][j+1:] 
                     enclosed_count += 1
-
-    print(print_lines[i]) 
+"""
+enclosed_count = 0
+for i, line in enumerate(print_lines):
+    for j, char in enumerate(line):
+        if char == "X":
+            enclosed_count += 1
 print(enclosed_count)
