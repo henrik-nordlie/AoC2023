@@ -52,26 +52,89 @@ vector<vector<int>> make_groups(vector<string> lines) {
     return groups;
 }
 
+bool group_fits_chunk (string line, int ch, int group) {
+    if (ch+group > line.size()) {
+        return false;
+    }
+    for (int i=ch; i<ch+group; i++) {
+        if (line[i] != '?' and line[i] != '#') { 
+            return false;
+        }
+    }
+    if (ch > 0 and line[ch-1] == '#') {
+        return false; // spring before chunk means no solution
+    }
+    else if (ch+group < line.size() and line[ch+group] == '#') {
+        return false; // spring after chunk means no solution
+    }
+    return true;
+}
+
+
+    
+int find_solutions (string line, vector<int> groups, int curr_group, int num_solutions, vector<int> checked) {
+    bool done = false;
+    int start_ind = 0;
+    while (!done) {
+        if (curr_group > 0) {
+            start_ind = max(checked[curr_group], checked[curr_group-1]+groups[curr_group-1]+1);
+        }
+        else {
+            start_ind = checked[curr_group];
+        }
+        for (int ch=start_ind; ch<line.size(); ch++) {
+            if ((line[ch] == '?' or line[ch] == '#') and group_fits_chunk(line, ch, groups[curr_group])) {
+                checked[curr_group] = ch;
+                if (curr_group == groups.size()-1) { // last group and fit means finished solution
+                   num_solutions++; 
+                }
+                else {
+                    curr_group++;
+                    ch += groups[curr_group-1];
+                }
+            }
+        }
+        if (curr_group > 0) {
+            checked[curr_group-1]++;
+            checked[curr_group] = 0;
+            curr_group--;
+        }
+        else {
+            done = true;
+        }
+    }
+    return num_solutions;
+}
+
 
 int main() {
-    string dataPath = "test.txt";
+    string dataPath = "data.txt";
     vector<string> lines = read_lines(dataPath);
-    
-    for (int i=0; i<lines.size()-1; i++) {
-        cout << lines[i] << endl;}
-    cout << "-------------------" << endl;
-
     vector<string> records = make_records(lines);
     vector<vector<int>> groups = make_groups(lines);
 
-    for (int i=0; i<records.size(); i++) {
-        cout << records[i] << " | ";
-        vector<int> group = groups[i];
-        for (int j=0; j<group.size(); j++) {
-            cout << group[j] << " ";
+    int num_solutions = 0;
+    int curr_group = 0;
+    vector<int> checked;
+    int ans = 0;
+
+    for (auto j=0; j<records.size(); j++) { 
+        cout << records[j] << " | ";
+        vector<int> group = groups[j];
+        for (int i=0; i<group.size(); i++) {
+            cout << group[i] << " ";
         }
         cout << endl;
+
+        int record_ind = j;
+        for (int i=0; i<groups[record_ind].size(); i++) {
+            checked.push_back(0);
+        }
+        int record_ans = find_solutions(records[record_ind], groups[record_ind], curr_group, num_solutions, checked);
+        cout << record_ans << endl;
+        ans += record_ans;
     }
     
+    cout << "ANSWER: " << ans << endl; 
 
 }
