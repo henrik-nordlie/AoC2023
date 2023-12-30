@@ -7,6 +7,7 @@
 #include <sstream>
 #include <cstdlib>
 #include <cstring>
+#include <cmath>
 
 
 using namespace std;
@@ -38,16 +39,26 @@ vector<vector<int>> make_groups(vector<string> lines) {
     vector<vector<int>> groups;
     vector<int> group;
     char * p;
+    int start_num = 0;
+    int num = 0;
     for (int i=0; i<lines.size()-1; i++) {
         group.clear();
         string line = lines[i];
         for (int c=0; c<=line.size(); c++) {
+            if (line[c] == ' ') {
+                start_num = c+1;
+            }
             if (line[c] == ',' or c == line.size()) {
-                char num_char = line[c-1];
-                group.push_back(atoi(&num_char));
+                int num = atoi(&line[start_num]);
+                start_num = c+1;
+                group.push_back(num);
             }
         }
         groups.push_back(group);
+        for (int i=0; i<group.size(); i++) {
+            cout << group[i] << " ";
+        }
+        cout << endl;
     }
     return groups;
 }
@@ -70,11 +81,37 @@ bool group_fits_chunk (string line, int ch, int group) {
     return true;
 }
 
+bool check_solution (string line, vector<int> solution, vector<int> groups) {
+    bool valid = true;
+    for (int ch=0; ch<line.size(); ch++) {
+        if (line[ch] =='#') {
+            int gr = 0;
+            bool in_sol = false;
+            for (int i=0; i<groups.size(); i++) {
+                if (!in_sol) {
+                    for (int j=0; j<groups[gr]; j++) {
+                        if (solution[i]+j == ch) {
+                            in_sol = true;
+                            break;
+                        }
+                    }
+                }
+                gr ++;
+            }
+            if (!in_sol) {
+                valid = false;
+                break;
+            }
+        }
+    }
+    return valid;
+}
 
     
 int find_solutions (string line, vector<int> groups, int curr_group, int num_solutions, vector<int> checked) {
     bool done = false;
     int start_ind = 0;
+    vector<vector<int>> all_checked;
     while (!done) {
         if (curr_group > 0) {
             start_ind = max(checked[curr_group], checked[curr_group-1]+groups[curr_group-1]+1);
@@ -86,7 +123,8 @@ int find_solutions (string line, vector<int> groups, int curr_group, int num_sol
             if ((line[ch] == '?' or line[ch] == '#') and group_fits_chunk(line, ch, groups[curr_group])) {
                 checked[curr_group] = ch;
                 if (curr_group == groups.size()-1) { // last group and fit means finished solution
-                   num_solutions++; 
+                    all_checked.push_back(checked);
+                    num_solutions++;
                 }
                 else {
                     curr_group++;
@@ -103,12 +141,28 @@ int find_solutions (string line, vector<int> groups, int curr_group, int num_sol
             done = true;
         }
     }
+    for (int i=0; i<all_checked.size(); i++) {
+            
+        if (!check_solution(line, all_checked[i], groups)) {
+                num_solutions--;
+        }
+        else {
+            string printLine = line;
+            for (int j=0; j<groups.size(); j++) {
+               for (int k=0; k<groups[j]; k++) {
+                   printLine[all_checked[i][j]+k] = '#';
+               }
+            }
+            cout << printLine << endl;
+        }
+    }
+
     return num_solutions;
 }
 
 
 int main() {
-    string dataPath = "data.txt";
+    string dataPath = "test2.txt";
     vector<string> lines = read_lines(dataPath);
     vector<string> records = make_records(lines);
     vector<vector<int>> groups = make_groups(lines);
@@ -119,13 +173,14 @@ int main() {
     int ans = 0;
 
     for (auto j=0; j<records.size(); j++) { 
+        /*
         cout << records[j] << " | ";
         vector<int> group = groups[j];
         for (int i=0; i<group.size(); i++) {
             cout << group[i] << " ";
         }
-        cout << endl;
-
+        cout << " | j: " << j << endl;
+*/
         int record_ind = j;
         for (int i=0; i<groups[record_ind].size(); i++) {
             checked.push_back(0);
