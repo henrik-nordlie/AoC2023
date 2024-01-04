@@ -83,62 +83,58 @@ bool is_col_mirror(vector<string> lines, int col) {
     return true;
 }
 
-int find_mirror_row(vector<string> lines, vector<int> duplicate_rows, vector<int> duplicate_cols) {
+int find_mirror_row(vector<string> lines, vector<int> duplicate_rows) {
     for (int i = 0; i < duplicate_rows.size(); i++) {
         if (is_row_mirror(lines, duplicate_rows[i])) {
-            return duplicate_rows[i];
+            return duplicate_rows[i]+1;
         }
     }
     return -1;
 }
 
-int find_mirror_col(vector<string> lines, vector<int> duplicate_rows, vector<int> duplicate_cols) {
+int find_mirror_col(vector<string> lines, vector<int> duplicate_cols) {
     for (int i = 0; i < duplicate_cols.size(); i++) {
         if (is_col_mirror(lines, duplicate_cols[i])) {
-            return duplicate_cols[i];
+            return duplicate_cols[i]+1;
         }
     }
     return -1;
 }
 
-int find_mirror(vector<string> lines, vector<int> duplicate_rows, vector<int> duplicate_cols) {
-    int mirror_row = find_mirror_row(lines, duplicate_rows, duplicate_cols);
-    int mirror_col = find_mirror_col(lines, duplicate_rows, duplicate_cols);
-    if (mirror_row != -1 && mirror_col != -1) {
-        cout << "HERE" << endl;
-        return min(mirror_row, mirror_col);
+int find_mirror_ans(vector<string> lines, vector<int> duplicate_rows, vector<int> duplicate_cols) {
+    int row = find_mirror_row(lines, duplicate_rows);
+    int col = find_mirror_col(lines, duplicate_cols);
+    if (row != -1) {
+        return 100*row;
     }
-    else if (mirror_row != -1) {
-        return mirror_row;
-    }
-    else if (mirror_col != -1) {
-        return -mirror_col;
+    else if (col != -1) {
+        return col;
     }
     else {
+        return -1;
+    }
+}
+
+int find_ans(vector<string> lines) {
+    vector<int> duplicate_rows = find_duplicate_neighbour_rows(lines);
+    vector<int> duplicate_cols = find_duplicate_cols(lines);
+    int ans = find_mirror_ans(lines, duplicate_rows, duplicate_cols);
+    if (ans != -1) {
+        return ans;
+    }
+    else {
+        cout << "No mirror" << endl;
         return 0;
     }
 }
 
-void find_all_mirrors (vector<vector<string>> patterns) {
-    for (int i = 0; i < patterns.size(); i++) {
-        vector<string> lines = patterns[i];
-        vector<int> duplicate_rows = find_duplicate_neighbour_rows(lines);
-        vector<int> duplicate_cols = find_duplicate_cols(lines);
-        int mirror = find_mirror(lines, duplicate_rows, duplicate_cols);
-        if (mirror == 0) {
-            cout << "Pattern " << i + 1 << " was not a mirror" << endl;
-        }
-        else if (mirror > 0) {
-            cout << "Pattern " << i + 1 << " was a mirror horizontally between rows " << mirror + 1 << " and " << mirror + 2 << endl;
-        }
-        else {
-            cout << "Pattern " << i + 1 << " was a mirror vertically between columns " << -mirror + 1 << " and " << -mirror + 2 << endl;
-        }
-    }
-}
-
 int main() {
-    string filename = "test.txt";
+    string filename = "data.txt";
     vector<vector<string>> patterns = read_file(filename);
-    find_all_mirrors(patterns);
+    int ans = 0;
+    for (int i = 0; i < patterns.size(); i++) {
+        ans += find_ans(patterns[i]);
+    }
+    cout << "Answer: " << ans << endl;
+    return 0;
 }
