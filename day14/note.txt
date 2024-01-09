@@ -1,0 +1,3 @@
+Forgot to make new file, so this is for task 2
+There are some hard coded values in the code :)
+Currently input must be 100x100 as in data.txt

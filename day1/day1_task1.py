@@ -1,4 +1,4 @@
-text = open("day1/day1_codes.txt", "r")
+text = open("test.txt", "r")
 nums = ["0","1","2","3","4","5","6","7","8","9"]
 count = 0
 codes = []
